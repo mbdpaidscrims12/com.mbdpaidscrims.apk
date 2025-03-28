@@ -1,0 +1,119 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Henny+Penny&display=swap');
+    *{ overflow-x: hidden; }
+    h1,h2,h3,h4,h5,h6 { margin: 0; }
+    body { padding: 0; margin: 0; background: linear-gradient(360deg, #091b33, #00a9a9, #172459); color: #fff; font-family: 'Poppins' , sans-serif; }
+    a { text-decoration: none; }
+    .amount { display: flex; }
+    .header { display: flex; align-items: center; padding: 10px; background: #04365f; color: #fff; box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px; gap: 10px; }
+    .header h2 { margin: 0; font-family: "Henny Penny", serif; color: e7e7e7; text-transform: capitalize; }
+    .header img { border-radius: 125px; width: 40px; height: 40px; }
+    .customer-text { display: flex; align-items: center; gap: 10px; margin: 10px; }
+    .customer-text hr { flex-grow: 1; border: none; border-top: 1px solid #FFF; }
+    .join-card { display: flex; align-items: center; justify-content: center; flex-direction: column; }
+    .form-group { flex-direction: column; gap: 10px; display: flex; width: 90%; }
+    .loading { display: flex; align-items: center; justify-content: center; height: 80vh; font-size: 24px; }
+    .match-info { display: flex; align-items: center; justify-content: center; flex-direction: column; height: 80vh; }
+    .detail-row { display: flex; flex-direction: row; gap: 10px; font-size: 18px; padding: 6px 6px 6px 10px; background: linear-gradient(45deg, transparent, #595959); margin: 5px; color: #d7d7d7; border-radius: 8px; }
+    .details-baap {  }
+</style>
+<div class="header">
+    <img src="https://i.ibb.co/S7mqxn5Z/mbd.jpg" class="image">
+    <h2>MBD PAID SCRIMS</h2>
+</div>
+<div id="error" class="error"></div>
+<div id="details" class="details-card" style="display: none;">
+    <div class="match-info" id="matchInfo"></div>
+</div>
+<div id="loading" class="loading">Loading...</div>
+<script>
+    async function fetchTournamentDetails() {
+        const tournamentKey = localStorage.getItem('current_tournament_key');
+        const username = localStorage.getItem('fire_local');
+        const errorDiv = document.getElementById('error');
+        
+        if (!tournamentKey || !username) {
+            showError('Tournament information not found. Please rejoin the tournament.');
+            return;
+        }
+
+        try {
+            const response = await fetch('https://script.google.com/macros/s/AKfycbwFHpEOnOic5hGkASuvX6pkSE5xEStpDIx0dcTSrLbi0SuiFkcGzM_cvE4F90nmpA0RpQ/exec', {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'getTournamentDetails',
+                    tournamentKey: tournamentKey,
+                    username: username
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                displayDetails(result.data);
+            } else {
+                showError(result.message || 'Unable to fetch tournament details');
+                localStorage.removeItem('current_tournament_key');
+            }
+        } catch (error) {
+            showError('Error fetching tournament details. Please try again.');
+            localStorage.removeItem('current_tournament_key');
+        }
+    }
+
+    function displayDetails(data) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'none';
+        document.getElementById('details').style.display = 'block';
+        
+        const matchInfoHtml = `
+        <div class="details-baap">
+        <div class="customer-text">
+        <h3>Tournament Details</h3>
+        <hr>
+        </div>
+            <div class="detail-row">
+                <div class="detail-label">Tournament Name:</div>
+                <div class="detail-value">${data.tournamentName || 'Not available'}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Start Time:</div>
+                <div class="detail-value">${data.startTime || 'Not specified'}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Room ID:</div>
+                <div class="detail-value">${data.roomId || 'Not yet available'}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Room Password:</div>
+                <div class="detail-value">${data.roomPassword || 'Not yet available'}</div>
+            </div>
+        </div>
+        `;
+        
+        document.getElementById('matchInfo').innerHTML = matchInfoHtml;
+    }
+
+    function showError(message) {
+        const loadingDiv = document.getElementById('loading');
+        const errorDiv = document.getElementById('error');
+        const detailsDiv = document.getElementById('details');
+
+        loadingDiv.style.display = 'none';
+        errorDiv.style.display = 'block';
+        errorDiv.textContent = message;
+        detailsDiv.style.display = 'none';
+    }
+
+    function refreshDetails() {
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('error').style.display = 'none';
+        document.getElementById('details').style.display = 'none';
+        fetchTournamentDetails();
+    }
+
+    fetchTournamentDetails();
+</script>

@@ -1,0 +1,36 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+   @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+  *{ overflow-x: hidden; }
+  body { padding: 0; margin: 0; font-family: "Poppins", serif; }
+  .container { display: flex; flex-direction: column-reverse; }
+  #userForm { background: #FFF; border-radius: 25px; padding: 20px; margin: -70px 0px 0px 0px; display: flex; flex-direction: column; align-items: center; }
+  input , button{ padding: 10px 8px 10px 15px; width: 100%; border-radius: 25px; border: 1px solid #939393; margin: 10px 0px 10px 0px; outline: none; font-weight: 400; font-family: "Poppins", serif; }
+  button { color: #fff; background: #000; border: none; }
+  a { color: #000; text-decoration: none; font-weight: 600; }
+  p { font-size: 18px; }
+  #otpSection{ display: flex; flex-direction: column; width: 100%; margin: auto; }
+  img { margin-top: -65px; }
+</style>
+<div class="container">
+<form id="userForm">
+    <h1>Sign up</h1>
+    <input type="text" id="firstName" placeholder="First Name" required>
+    <input type="text" id="lastName" placeholder="Last Name" required>
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="number" id="mobileNumber" placeholder="Mobile Number" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <input type="number" id="gameId" placeholder="Game UID" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="text" id="referCode" placeholder="Referral Code (Optional)">
+    <button type="button" onclick="generateOtp()">Get OTP</button>
+    <div id="otpSection" style="display: none;">
+        <input type="number" id="otp" placeholder="Enter OTP">
+        <button type="button" onclick="submitData()">Submit</button>
+    </div>
+    <p>Already Have Account<a href="login.html"> Click Here</a></p>
+</form>
+<img src="https://i.ibb.co/9q9c77S/amin.gif">
+</div>
+<script src="signup.js"></script>

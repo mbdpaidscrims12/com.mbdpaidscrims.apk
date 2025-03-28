@@ -1,0 +1,98 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Withdrawal Form</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Henny+Penny&display=swap');
+    *{ overflow-x: hidden; }
+    h1,h2,h3,h4,h5,h6 ,p { margin: 0; }
+    button { font-family: 'Poppins' , sans-serif ; }
+    body { padding: 0; margin: 0; background: linear-gradient(360deg, #091b33, #00a9a9, #172459); color: #fff; font-family: 'Poppins' , sans-serif ; }
+    .header { display: flex; align-items: center; padding: 10px; background: #04365f; color: #fff; box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px; }
+    .header h2 { margin: 0px 0px 0px 10px; font-family: "Henny Penny", serif; color: e7e7e7; text-transform: capitalize; }
+    .header img { border-radius: 125px; }
+    #withdrawalForm { display: flex; align-items: center; justify-content: center; flex-direction: column; height: 93vh; width: 110% }
+    #message { margin-top: 10px; padding: 10px; display: none; }
+    .success { background: #dff0d8; color: #3c763d; }
+    .error { background: #f2dede; color: #a94442; }
+    input , button{ padding: 10px 8px 10px 15px; width: 90%; border-radius: 25px; border: 1px solid #939393; margin: 10px 0px 10px 0px; outline: none; font-weight: 400; font-family: "Poppins", serif; }
+    button { color: #fff; background: #000; border: none; width: 90% }
+    input { background: #dbdbdb; }
+    .header img { width: 40px; height: 40px; }
+    .form-group { display: flex; width: 90%; flex-direction: column; }
+</style>
+</head>
+<body>
+<div class="header">
+    <img src="https://i.ibb.co/S7mqxn5Z/mbd.jpg" class="image">
+    <h2>MBD PAID SCRIMS</h2>
+</div>
+    <div id="userInfo" style="display: none;"></div>
+    <form id="withdrawalForm">
+        <div class="form-group">
+            <input type="text" id="upiId" required placeholder="UPI ID:">
+            <input type="number" id="amount" required min="1" placeholder="Amount (₹):">
+            <button type="submit">Submit Withdrawal</button>
+        </div>
+    </form>
+    <div id="message"></div>
+
+    <script>
+        const username = localStorage.getItem('fire_local');
+        const userInfo = document.getElementById('userInfo');
+        const messageDiv = document.getElementById('message');
+        const form = document.getElementById('withdrawalForm');
+
+        if (username) {
+            userInfo.innerHTML = `<p>Logged in as: <strong>${username}</strong></p>`;
+        } else {
+            alert('Please login first!');
+            userInfo.innerHTML = '<p style="color: red;">Please login first!</p>';
+            form.style.display = 'none';
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const withdrawalAmount = parseFloat(document.getElementById('amount').value);
+            
+            if (withdrawalAmount < 1) {
+                showMessage('error', 'Please enter a valid amount greater than 0');
+                return;
+            }
+
+            const data = {
+                action: 'withdraw',
+                username: username,
+                upiId: document.getElementById('upiId').value,
+                amount: withdrawalAmount,
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                const response = await fetch('https://script.google.com/macros/s/AKfycbwqDyeYU1ViEX4xxcrg5js9zI8TTtSssIOP95jKGagmHkZJ0iiiYYzT4mxg_KOHTFGv/exec', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                showMessage('success', 'Withdrawal request successfully submitted! We are processing it now.');
+                form.reset();
+
+            } catch (error) {
+                showMessage('error', 'Error submitting request. Please try again.');
+                console.error('Error:', error);
+            }
+        });
+
+        function showMessage(type, message) {
+            messageDiv.classList.remove('success', 'error');
+            messageDiv.classList.add(type);
+            messageDiv.textContent = message;
+            messageDiv.style.display = 'block';
+        }
+</script>

@@ -1,0 +1,87 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Henny+Penny&display=swap');
+  * { overflow-x: hidden; }
+  h1, h2, h3, h4, h5, h6, p { margin: 0; }
+  body { padding: 0; margin: 0; background: linear-gradient(360deg, #091b33, #00a9a9, #172459); color: #fff; font-family: 'Poppins', sans-serif; }
+  .header { display: flex; align-items: center; padding: 10px; background: #04365f; color: #fff; box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px; }
+  .header h2 { margin: 0px 0px 0px 10px; font-family: "Henny Penny", serif; color: e7e7e7; }
+  .customer-text { display: flex; align-items: center; gap: 10px; margin: 10px; }
+  .customer-text h3 { margin: 0px; }
+  .customer-text hr { flex-grow: 1; border: none; border-top: 2px solid #fff; }
+  .body img { width: 120px; border-radius: 125px; }
+  .header img { border-radius: 125px; width: 40px; }
+  .body { display: flex; align-items: center; justify-content: center; flex-direction: column; background: linear-gradient(45deg, #00BCD4, #98ecff61); padding: 20px; margin: 10px; border-radius: 12px; }
+  .body p { text-align: center; margin: 15px 0px 0px 0px; }
+  #refer-code { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 24px; border: 1px solid; margin: 10px; padding: 10px; border-radius: 12px; }
+  #refer-code span { font-size: 16px; color: #00e5ff; }
+  button { margin: 10px; padding: 8px; color: #fff; width: 150px; background: linear-gradient(45deg, black, transparent); border: none; font-size: 16px; }
+</style>
+<div class="header">
+    <img src="https://i.ibb.co/S7mqxn5Z/mbd.jpg" class="image">
+    <h2>MBD PAID SCRIMS</h2>
+</div>
+<div class="customer-text">
+    <h3>Refer & Earn</h3>
+    <hr>
+</div>
+<div class="body">
+  <img src="https://media.istockphoto.com/id/1149134493/vector/girl-is-making-funny-selfie-group-picture.jpg?s=612x612&w=0&k=20&c=K4DP2b8EreiO3TYnxCnJyJqgWr5dpgYF_HkTjTFljm8=">
+  <h3>Refer More Earn More!</h3>
+  <p>Invite Your Friends On App And Enjoy By Playing Tournaments And Each Refer You Got 5 Coins In Your Wallet.</p>
+</div>
+<div id="refer-code"></div>
+<button id="shareButton">Refer And Earn</button>
+<script>
+  function getReferCode() {
+    var username = localStorage.getItem("fire_local");
+    if (username) {
+      fetch("https://script.google.com/macros/s/AKfycbxAcFA-o7kSFYlVm_y-1Jmv4PnwS80nv2ETPJXSv-fL9hh25ZwF49BaA2kSNkPK4FOj/exec", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "username=" + username
+      }) 
+      .then(response => response.text())
+      .then(data => {
+        var result = data.split(',');
+        document.getElementById("refer-code").innerHTML = "<span>YOUR PROMO CODE</span>" + result[0] + "<br>" + "<span>Refer Earning: </span>" + result[1];
+
+        window.promoCode = result[0];
+      })
+      .catch(error => {
+        document.getElementById("refer-code").innerHTML = "Error: " + error.message;
+      });
+    } else {
+      document.getElementById("refer-code").innerHTML = "Please login to view refer code";
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    getReferCode();
+  });
+</script>
+
+<script>
+    const shareButton = document.getElementById("shareButton");
+
+    shareButton.addEventListener("click", () => {
+        if (window.promoCode) {
+            var promoText = "🔥 Share the MBD PAID SCRIMS Experience! 🔥 Tell your friends about the ultimate gaming showdown! Download Fire Battle now and join the action. Let the battle begin! 👉 https://apnahindustan.github.io/website/ \n\nYour Promo Code: " + window.promoCode;
+
+            navigator.clipboard.writeText(promoText)
+                .then(() => {
+                    alert('Promo text and code copied to clipboard! Share it with your friends.');
+                })
+                .catch((error) => {
+                    console.error('Error copying text: ', error);
+                    alert('Failed to copy the promo text.');
+                });
+        } else {
+            alert('Promo code is not available. Please try again later.');
+        }
+    });
+</script>
